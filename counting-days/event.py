@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import timedelta, date
 
 @dataclass
 class Event:
     fulldate: str
-    event: str
+    date: date
+    title: str
     tdelta: timedelta = timedelta(0)
