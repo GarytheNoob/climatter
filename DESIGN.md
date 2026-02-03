@@ -8,44 +8,18 @@ Accept both local and remote sources.
 
 Both sources are in JSON format as below:
 
-```json
-[
-    {
-        "type": "tag",
-        "name": "Friends' Birthdays",
-        "color": "cyan",
-        "content": [
-            {
-                "type": "event",
-                "name": "Alice's Birthday",
-                "date": "1990-05-15",
-            },
-            {
-                "type": "event",
-                "name": "Bob's Birthday",
-                "date": "1988-11-22",
-            }
-        ]
-    },
-    {
-        "type": "tag",
-        "name": "Holidays",
-        "color": "green",
-        "content": [
-            {
-                "type": "event",
-                "name": "New Year's Day",
-                "date": "2024-01-01",
-            },
-            {
-                "type": "event",
-                "name": "Independence Day",
-                "date": "2024-07-04",
-            }
-        ]
-    }
-]
-```
+A list of events, each event has:
+- A name (string)
+- A date (string in ISO 8601 format, e.g., "2023-12-31")
+- An optional list of tags (string)
+- An optional color (string, e.g., "red", "#FF0000")
+- An optional description (string)
+- An optional flag `yearly`=false (boolean) indicating if the event recurs 
+yearly on the same date.
+
+
+If `yearly` is true, the event date is treated as recurring every year on the
+same month and day, and the year part of the date is ignored for counting.
 
 ### CLI
 
