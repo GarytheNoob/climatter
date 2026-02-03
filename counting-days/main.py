@@ -1,31 +1,34 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from .event import Event
 
-events: list[dict[str, str]] = [
+data: list[dict[str, str]] = [
     {"fulldate": "2026-01-01", "event": "New Year's Day"},
     {"fulldate": "2026-02-03", "event": "Today! Special"},
     {"fulldate": "2026-07-04", "event": "Independence Day"},
     {"fulldate": "2026-12-25", "event": "Christmas Day"},
 ]
 
-def main() -> None:
-    today = datetime.today().date()
-    today_event = next(
-        (event for event in events
-            if event["fulldate"] == today.strftime("%Y-%m-%d")),
-        None)
-    if today_event:
-        print(f"Today is {today_event['event']}!")
 
-    upcoming_events = [
-        event for event in events if datetime.strptime(event["fulldate"], "%Y-%m-%d").date() >= today
+def parse_data(events: list[dict[str, str]]) -> list[Event]:
+
+    def days_wrt_today(target_date_str: str) -> timedelta:
+        today = datetime.today().date()
+        target_date = datetime.strptime(target_date_str, "%Y-%m-%d").date()
+        return target_date - today
+
+    return [
+        Event(
+            fulldate=event["fulldate"],
+            event=event["event"],
+            tdelta=days_wrt_today(event["fulldate"])
+        )
+        for event in events
     ]
-    upcoming_events.sort(key=lambda x: x["fulldate"])
 
-    if upcoming_events:
-        next_event = upcoming_events[0]
-        print(f"The next event is {next_event['event']} on {next_event["fulldate"]}.")
-    else:
-        print("There are no upcoming events.")
+def main() -> None:
+    enriched_events = parse_data(data)
+    for event in enriched_events:
+        print(f"Event: {event.event}, Date: {event.fulldate}, Days until: {event.tdelta.days}")
 
 
 if __name__ == "__main__":
