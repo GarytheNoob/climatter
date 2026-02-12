@@ -5,18 +5,6 @@ from .get_events import read_events_from_file
 from .lang.en import *
 
 
-def check_anniversary_since(event: Event) -> int:
-    if event.tdelta.days >= 0 or event.yearly:
-        return -1
-    if (
-        event.date.month == datetime.now().month
-        and event.date.day == datetime.now().day
-    ):
-        years = datetime.now().year - event.date.year
-        return years
-    return -1
-
-
 def list_events(events: list[Event]) -> None:
     events.sort(
         key=lambda e: (
@@ -28,7 +16,7 @@ def list_events(events: list[Event]) -> None:
         if event.tdelta.days == 0:
             print(f"{TODAY_STR}: {event.title}")
             continue
-        anniversary = check_anniversary_since(event)
+        anniversary = event.annivarsary
         is_hundreds_days = not event.tdelta.days % 100 and event.tdelta.days < 0
         if anniversary > 0:
             print(ANNIVERSARY_STR.format(anniv=anniversary, title=event.title))
