@@ -29,14 +29,14 @@ def display_events(events: list[Event]) -> None:
                 # date_str,
                 f"[orange3]{title}",
                 f"[bold orange1]{-tdelta} [bold orange3]days",
-                "[bold orange3]ago",
+                "[orange3]ago",
             )
         else:
             table.add_row(
                 # date_str,
-                f"[green3]{title}",
-                "[bold green1]0 days",
-                "[bold green3]TODAY",
+                f"[yellow]{title}",
+                "[bold yellow]TODAY",
+                "",
             )
 
     console.print(table)
