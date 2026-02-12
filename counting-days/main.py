@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from .event import Event
-from .get_events import read_events
+from .get_events import read_events_from_file
 from .lang.en import *
 
 
@@ -60,7 +60,7 @@ def list_events(events: list[Event]) -> None:
 
 
 def main() -> None:
-    events = read_events("events/test.events")
+    events = read_events_from_file("events/test.events")
     enriched_events = normalize_events(events)
     list_events(enriched_events)
 

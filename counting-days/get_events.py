@@ -1,10 +1,18 @@
+import os
 from datetime import date
 
 from .event import Event
 
 
-def read_events(file_path: str) -> list[Event]:
+def read_events_from_file(file_path: str) -> list[Event]:
     events = []
+    if (
+        not file_path
+        or not os.path.exists(file_path)
+        or not os.path.isfile(file_path)
+    ):
+        print(f"File not found: {file_path}")
+        return events
     with open(file_path, "r") as file:
         for line in file:
             try:
