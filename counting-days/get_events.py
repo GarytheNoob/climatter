@@ -5,7 +5,7 @@ from .event import Event
 
 
 def read_events_from_file(file_path: str) -> list[Event]:
-    events = []
+    events: list[Event] = []
     if (
         not file_path
         or not os.path.exists(file_path)
@@ -28,8 +28,9 @@ def read_events_from_file(file_path: str) -> list[Event]:
                     )
                 else:
                     raise ValueError("Invalid date format")
-                events.append(event)
             except ValueError:
                 print(f"Invalid line format: {line.strip()}")
                 continue
+            else:
+                events.append(event)
     return events
