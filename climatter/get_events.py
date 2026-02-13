@@ -5,6 +5,7 @@ from .event import Event
 
 
 def read_events_from_file(file_path: str) -> list[Event]:
+    file_path = os.path.abspath(os.path.expanduser(file_path))
     events: list[Event] = []
     if (
         not file_path
@@ -13,7 +14,7 @@ def read_events_from_file(file_path: str) -> list[Event]:
     ):
         print(f"File not found: {file_path}")
         return events
-    with open(file_path, "r") as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         for line in file:
             try:
                 date_str, title = line.strip().split(";;", 2)
