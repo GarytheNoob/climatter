@@ -30,7 +30,7 @@ def load_events_with_args() -> list[Event]:
     return loaded_events
 
 
-if __name__ == "__main__":
+def main():
     events = load_events_with_args()
     events.sort(
         key=lambda e: (
@@ -41,3 +41,7 @@ if __name__ == "__main__":
     )
     notify_events(events)
     list_events(events)
+
+
+if __name__ == "__main__":
+    main()
