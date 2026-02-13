@@ -18,9 +18,12 @@ def load_events_with_args() -> list[Event]:
         from datetime import datetime
 
         try:
-            dev_today = datetime.strptime(args.dev_today, "%Y-%m-%d").date()
+            dev_today = datetime.fromisoformat(args.dev_today).date()
         except ValueError:
-            print(f"Invalid date format for --dev-today: {args.dev_today}")
+            print(
+                f"Invalid date format for --dev-today: {args.dev_today}\n"
+                "Expected format: YYYY-MM-DD"
+            )
             sys.exit(1)
         for e in loaded_events:
             e.checkin(today=dev_today)
