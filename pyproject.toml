@@ -12,6 +12,11 @@ dependencies = [
     "rich==14.3.2",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pylint==4.0.4",
+]
+
 [project.scripts]
 climatter = "climatter.main:main"
 
