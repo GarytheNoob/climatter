@@ -1,4 +1,6 @@
+import argparse
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +20,8 @@ class Option:
 class Config:
     option: Option
     event_lists: dict[str, str]
+    dev_today: date | None = None
+    notify: bool = False
 
 
 # === Private Helper Functions ===
@@ -97,7 +101,9 @@ def _validate_config_data(data: dict[str, Any]) -> None:
 # === Public API ===
 
 
-def read_config(config_path: str | None = None) -> Config:
+def read_config(
+    config_path: str | None = None, args: argparse.Namespace | None = None
+) -> Config:
     """
     Reads and parses the config file.
 
@@ -112,6 +118,9 @@ def read_config(config_path: str | None = None) -> Config:
         ValueError: If config validation fails
         yaml.YAMLError: If YAML parsing fails
     """
+    # TODO: use args to override config options if provided (e.g. dev_today,
+    # notify)
+
     # Find which config file to use
     config_file = _find_config_file(config_path)
 
@@ -142,5 +151,19 @@ def read_config(config_path: str | None = None) -> Config:
         option=option,
         event_lists=data["event_lists"],  # Store as-is (strings, unexpanded)
     )
+
+    if args:
+        if args.dev_today:
+            from datetime import datetime
+
+            try:
+                config.dev_today = datetime.fromisoformat(args.dev_today).date()
+            except ValueError as e:
+                raise ValueError(
+                    f"Invalid date format for --dev-today: {args.dev_today}.\n"
+                    + "Expected format: YYYY-MM-DD"
+                ) from e
+
+        config.notify = args.notify
 
     return config

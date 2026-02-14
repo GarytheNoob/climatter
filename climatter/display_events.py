@@ -83,10 +83,7 @@ def notify_events(events: list[Event]) -> None:
 
     events = list(filter(lambda e: e.tdelta.days <= 0, events))
 
-    for i, event in enumerate(events):
-        # if event.tdelta.days > 0:
-        #     continue
-        # content = ""
+    for event in events:
         if event.tdelta.days == 0:
             table.add_row(
                 "Today is",

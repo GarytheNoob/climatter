@@ -5,7 +5,7 @@ from .event import Event
 
 
 def read_events_from_file(path_str: str) -> list[Event]:
-    file_path = Path(path_str)
+    file_path = Path(path_str).expanduser()
     events: list[Event] = []
     if (
         # not file_path
