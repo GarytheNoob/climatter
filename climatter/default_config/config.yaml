@@ -2,7 +2,7 @@ options:
   # list_mode can be "nearest", "furthest" or "all".
   #   "nearest" will show the nearest events;
   #   "furthest" will show the furthest events
-  #   The number of events are shown is determined by the
+  #   The number of events shown is determined by the
   #   list_future_events_count and list_past_events_count options.
   #   "all" will show all events.
   list_mode: nearest
