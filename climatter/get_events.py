@@ -7,8 +7,11 @@ from .event import Event
 def read_events_from_file(path_str: str) -> list[Event]:
     file_path = Path(path_str).expanduser()
     events: list[Event] = []
-    if not file_path.is_file():
+    if not file_path.exists():
         print(f"File not found: {file_path}")
+        return events
+    if not file_path.is_file():
+        print(f"Invalid file path (not a file): {file_path}")
         return events
     with file_path.open("r", encoding="utf-8") as file:
         for line in file:
