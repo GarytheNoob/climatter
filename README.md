@@ -13,17 +13,17 @@ that helps you remember important dates and events.
 - [x] Notify if today is an important day (event, annivarsary of past event,
       hundred-day since past event, etc).
 
-- [ ] Configure
-  - [ ] Support multiple list files for different categories of events.
-
-  - [x] Configurable number of lines displayed when listing.
-
-  - [x] Load local configuration from file.
-
 - [ ] Tags: Support tagging events for better organization and filtering.
   - [ ] Allow users to filter events by tags when listing.
 
   - [ ] Custom color coding for different tags.
+
+- [ ] Configure
+  - [ ] Support multiple list files for different categories of events.
+
+  - [ ] Configurable number of lines displayed when listing.
+
+  - [ ] Load local configuration from file.
 
 ## Installation
 
@@ -58,29 +58,20 @@ Run `climatter --help` to see available commands and options:
 > usage information.
 
 ```text
-usage: climatter [-h] [--config CONFIG] [-n] [--dev-today DEV_TODAY]
+usage: climatter [-h] [-n] [--dev-today DEV_TODAY] events_file
 
 Event notifier and lister
 
+positional arguments:
+  events_file           Path to the events file
+
 options:
   -h, --help            show this help message and exit
-  --config CONFIG       Path to config file. If not set, uses priority:
-                        user config → default config
   -n, --notify          Notify events. If not set, events will be listed
                         instead.
   --dev-today DEV_TODAY
                         Override today's date (YYYY-MM-DD)
 ```
-
-### Configuration
-
-cliMatter can be configured using a local configuration file. By default, it
-looks for a user configuration file at `~/.config/climatter/config.yaml`. You
-can also specify a custom configuration file using the `--config` option.
-
-The default configuration file is located at `./climatter/default_config/config.yaml`
-in the project directory. You can copy this file to your user configuration path
-and modify it as needed.
 
 ### Event List File
 
@@ -99,3 +90,5 @@ You need to create a local event list file in the following format:
 12-25;;Christmas
 1990-07-15;;John's Birthday
 ```
+
+Save this file and provide its path to `climatter`.

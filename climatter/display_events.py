@@ -1,7 +1,6 @@
 from rich.console import Console
 from rich.table import Table
 
-from .config import Option
 from .event import Event
 
 
@@ -43,36 +42,6 @@ def list_events(events: list[Event]) -> None:
     console.print(table)
 
 
-def filter_events(events: list[Event], option: Option) -> list[Event]:
-    if option.list_mode == "all":
-        return sorted(events, key=lambda e: e.tdelta, reverse=True)
-
-    future_events = list(filter(lambda e: e.tdelta.days > 0, events))
-    past_events = list(filter(lambda e: e.tdelta.days < 0, events))
-    today_events = list(filter(lambda e: e.tdelta.days == 0, events))
-
-    future_events.sort(key=lambda e: e.tdelta)
-    past_events.sort(key=lambda e: e.tdelta, reverse=True)
-
-    ret = []
-
-    if option.list_mode == "nearest":
-        ret = (
-            future_events[: option.list_future_events_count]
-            + today_events
-            + past_events[: option.list_past_events_count]
-        )
-    else:  # "furthest"
-        ret = (
-            future_events[-option.list_future_events_count :]
-            + today_events
-            + past_events[-option.list_past_events_count :]
-        )
-
-    ret.sort(key=lambda e: e.tdelta, reverse=True)
-    return ret
-
-
 def notify_events(events: list[Event]) -> None:
     console = Console()
     table = Table.grid(pad_edge=True, padding=(0, 2))
@@ -83,7 +52,10 @@ def notify_events(events: list[Event]) -> None:
 
     events = list(filter(lambda e: e.tdelta.days <= 0, events))
 
-    for event in events:
+    for i, event in enumerate(events):
+        # if event.tdelta.days > 0:
+        #     continue
+        # content = ""
         if event.tdelta.days == 0:
             table.add_row(
                 "Today is",

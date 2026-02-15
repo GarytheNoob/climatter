@@ -10,16 +10,7 @@ readme = "README.md"  # Optional, only if you create one
 requires-python = ">=3.9"
 dependencies = [
     "rich==14.3.2",
-    "pyyaml==6.0.2",
 ]
-
-[project.optional-dependencies]
-dev = [
-    "pylint==4.0.4",
-]
-
-[tool.setuptools.package-data]
-climatter = ["default_config/*.yaml"]
 
 [project.scripts]
 climatter = "climatter.main:main"

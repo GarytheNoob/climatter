@@ -1,22 +1,20 @@
+import os
 from datetime import date
-from pathlib import Path
 
 from .event import Event
 
 
-def read_events_from_file(path_str: str) -> list[Event]:
-    file_path = Path(path_str).expanduser()
+def read_events_from_file(file_path: str) -> list[Event]:
+    file_path = os.path.abspath(os.path.expanduser(file_path))
     events: list[Event] = []
     if (
-        # not file_path
-        # or not os.path.exists(file_path)
-        # or not os.path.isfile(file_path)
-        not file_path.is_file()
-        or not file_path.exists()
+        not file_path
+        or not os.path.exists(file_path)
+        or not os.path.isfile(file_path)
     ):
-        print(f"File not found: {path_str}")
+        print(f"File not found: {file_path}")
         return events
-    with file_path.open("r", encoding="utf-8") as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         for line in file:
             try:
                 if not line.strip() or line.strip().startswith("#"):
