@@ -13,7 +13,7 @@ that helps you remember important dates and events.
 - [x] Notify if today is an important day (event, annivarsary of past event,
       hundred-day since past event, etc).
 
-- [ ] Configure
+- [x] Configure
   - [x] Support multiple list files for different categories of events.
 
   - [x] Configurable number of lines displayed when listing.
