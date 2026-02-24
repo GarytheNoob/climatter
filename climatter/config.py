@@ -61,50 +61,6 @@ def _find_config_file(user_path: str | None = None) -> Path | None:
     return None
 
 
-def _validate_config_data(data: dict[str, Any]) -> None:
-    """
-    Validates the loaded YAML config structure.
-    Raises ValueError with helpful message if validation fails.
-    """
-    # Check top-level keys
-    if "options" not in data:
-        raise ValueError("Config missing required 'options' section")
-
-    if "event_lists" not in data:
-        raise ValueError("Config missing required 'event_lists' section")
-
-    if not isinstance(data["options"], dict):
-        raise ValueError("'options' must be a dictionary")
-
-    options = data["options"]
-
-    # Validate list_mode
-    if "list_mode" not in options:
-        raise ValueError("Config missing 'options.list_mode'")
-
-    valid_modes = {"nearest", "furthest", "all"}
-    if options["list_mode"] not in valid_modes:
-        raise ValueError(
-            f"Invalid list_mode: '{options['list_mode']}'. "
-            f"Must be one of: {', '.join(valid_modes)}"
-        )
-
-    # event_lists must be a dict
-    if not isinstance(data["event_lists"], dict):
-        raise ValueError(
-            "'event_lists' must be a dictionary mapping names to paths"
-        )
-
-    event_lists = data["event_lists"]
-    for name, path in event_lists.items():
-        if not isinstance(name, str):
-            raise ValueError(f"Event list name must be a string: {name}")
-        if not isinstance(path, str):
-            raise ValueError(
-                f"Event list path must be a string for '{name}': {path}"
-            )
-
-
 # === Public API ===
 
 
@@ -135,17 +91,14 @@ def read_config(args: argparse.Namespace | None = None) -> Config:
     # Find which config file to use
     config_file = _find_config_file(args.config if args else None)
 
-    if config_file is None:
-        config = Config(
-            option=Option(),  # Defaults
-            event_lists={
-                "default": "~/.config/climatter/events",
-            },
-        )
-        print(
-            "Warning: No config file found. Using default configuration with no event lists."
-        )
-    else:
+    config = Config(
+        option=Option(),  # Defaults
+        event_lists={
+            "default": "~/.config/climatter/events",
+        },
+    )
+
+    if config_file:
         # Load YAML
         try:
             with config_file.open("r", encoding="utf-8") as f:
@@ -161,28 +114,23 @@ def read_config(args: argparse.Namespace | None = None) -> Config:
                 f"Config file {config_file} must contain a YAML dictionary at the top level"
             )
 
-        # Validate structure
-        _validate_config_data(data)
-
         # Extract with defaults for optional fields
-        options_data = data["options"]
-        option = Option(
-            list_mode=options_data["list_mode"],
-            list_future_events_count=options_data.get(
-                "list_future_events_count", 5
-            ),
-            list_past_events_count=options_data.get(
-                "list_past_events_count", 5
-            ),
-        )
+        if "options" in data and isinstance(data["options"], dict):
+            options_data = data["options"]
+            if "list_mode" in options_data:
+                config.option.list_mode = options_data["list_mode"]
+            if "list_future_events_count" in options_data:
+                config.option.list_future_events_count = options_data[
+                    "list_future_events_count"
+                ]
+            if "list_past_events_count" in options_data:
+                config.option.list_past_events_count = options_data[
+                    "list_past_events_count"
+                ]
 
         # Build Config object
-        config = Config(
-            option=option,
-            event_lists=data[
-                "event_lists"
-            ],  # Store as-is (strings, unexpanded)
-        )
+        if "event_lists" in data and isinstance(data["event_lists"], dict):
+            config.event_lists = data["event_lists"]
 
     if args:
         if args.mode:
