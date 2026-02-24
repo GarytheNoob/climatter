@@ -18,7 +18,12 @@ def handle_args() -> argparse.Namespace:
         action="store_true",
         help="Notify events. If not set, events will be listed instead.",
     )
-
+    parser.add_argument(
+        "-m",
+        "--mode",
+        choices=["nearest", "furthest", "all"],
+        help="List mode: 'nearest' (default), 'furthest', or 'all'",
+    )
     parser.add_argument(
         "--dev-today", help="Override today's date (YYYY-MM-DD)"
     )

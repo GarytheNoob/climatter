@@ -13,6 +13,4 @@ options:
   list_past_events_count: 5
 
 event_lists:
-  otaku_events: ~/playground/events/otaku.events
-
-  test_events: ~/playground/events/test.events
+  default: ~/.config/climatter/events

@@ -11,9 +11,9 @@ import yaml
 
 @dataclass
 class Option:
-    list_mode: str
-    list_future_events_count: int
-    list_past_events_count: int
+    list_mode: str = "nearest"
+    list_future_events_count: int = 5
+    list_past_events_count: int = 5
 
 
 @dataclass
@@ -27,17 +27,12 @@ class Config:
 # === Private Helper Functions ===
 
 
-def _get_default_config_path() -> Path:
-    """Returns the path to the bundled default config file."""
-    return Path(__file__).parent / "default_config" / "config.yaml"
-
-
 def _get_user_config_path() -> Path:
     """Returns the path to the user's config file (may not exist)."""
     return Path.home() / ".config" / "climatter" / "config.yaml"
 
 
-def _find_config_file(user_path: str | None = None) -> Path:
+def _find_config_file(user_path: str | None = None) -> Path | None:
     """
     Finds the config file to use based on priority:
     1. User-specified path (if provided and exists)
@@ -63,7 +58,7 @@ def _find_config_file(user_path: str | None = None) -> Path:
         return user_config
 
     # Priority 3: Default bundled config
-    return _get_default_config_path()
+    return None
 
 
 def _validate_config_data(data: dict[str, Any]) -> None:
@@ -127,6 +122,8 @@ def read_config(args: argparse.Namespace | None = None) -> Config:
               (YYYY-MM-DD), used for development/testing.
             - notify: Optional notification flag/setting applied to the
               returned Config object.
+            - mode: Optional list mode override applied to the returned Config
+              object.
     Returns:
         Config object with parsed configuration
 
@@ -138,41 +135,58 @@ def read_config(args: argparse.Namespace | None = None) -> Config:
     # Find which config file to use
     config_file = _find_config_file(args.config if args else None)
 
-    # Load YAML
-    try:
-        with config_file.open("r", encoding="utf-8") as f:
-            data = yaml.safe_load(f)
-    except yaml.YAMLError as e:
-        raise yaml.YAMLError(
-            f"Failed to parse config file {config_file}: {e}"
-        ) from e
-    if data is None:
-        raise ValueError(f"Config file {config_file} is empty or invalid")
-    if not isinstance(data, dict):
-        raise ValueError(
-            f"Config file {config_file} must contain a YAML dictionary at the top level"
+    if config_file is None:
+        config = Config(
+            option=Option(),  # Defaults
+            event_lists={
+                "default": "~/.config/climatter/events",
+            },
+        )
+        print(
+            "Warning: No config file found. Using default configuration with no event lists."
+        )
+    else:
+        # Load YAML
+        try:
+            with config_file.open("r", encoding="utf-8") as f:
+                data = yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            raise yaml.YAMLError(
+                f"Failed to parse config file {config_file}: {e}"
+            ) from e
+        if data is None:
+            raise ValueError(f"Config file {config_file} is empty or invalid")
+        if not isinstance(data, dict):
+            raise ValueError(
+                f"Config file {config_file} must contain a YAML dictionary at the top level"
+            )
+
+        # Validate structure
+        _validate_config_data(data)
+
+        # Extract with defaults for optional fields
+        options_data = data["options"]
+        option = Option(
+            list_mode=options_data["list_mode"],
+            list_future_events_count=options_data.get(
+                "list_future_events_count", 5
+            ),
+            list_past_events_count=options_data.get(
+                "list_past_events_count", 5
+            ),
         )
 
-    # Validate structure
-    _validate_config_data(data)
-
-    # Extract with defaults for optional fields
-    options_data = data["options"]
-    option = Option(
-        list_mode=options_data["list_mode"],
-        list_future_events_count=options_data.get(
-            "list_future_events_count", 5
-        ),
-        list_past_events_count=options_data.get("list_past_events_count", 5),
-    )
-
-    # Build Config object
-    config = Config(
-        option=option,
-        event_lists=data["event_lists"],  # Store as-is (strings, unexpanded)
-    )
+        # Build Config object
+        config = Config(
+            option=option,
+            event_lists=data[
+                "event_lists"
+            ],  # Store as-is (strings, unexpanded)
+        )
 
     if args:
+        if args.mode:
+            config.option.list_mode = args.mode
         if args.dev_today:
             from datetime import datetime
 
