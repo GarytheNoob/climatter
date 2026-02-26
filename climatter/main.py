@@ -1,6 +1,6 @@
 import argparse
 
-from .config import read_config
+from .config import load_config
 from .display_events import filter_events, list_events, notify_events
 from .get_events import load_events
 
@@ -31,7 +31,7 @@ def handle_args() -> argparse.Namespace:
 
 def main():
     args = handle_args()
-    config = read_config(args)
+    config = load_config(args)
 
     events = load_events(config)
     if config.notify:
