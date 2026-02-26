@@ -1,6 +1,7 @@
 from datetime import date
 from pathlib import Path
 
+from .config import Config
 from .event import Event
 
 
@@ -35,4 +36,16 @@ def read_events_from_file(path_str: str) -> list[Event]:
                 continue
             else:
                 events.append(event)
+    return events
+
+
+def load_events(config: Config) -> list[Event]:
+    events: list[Event] = []
+    for event_list in config.event_lists.values():
+        e = read_events_from_file(event_list)
+        if e:
+            events.extend(e)
+    if config.dev_today:
+        for event in events:
+            event.checkin(today=config.dev_today)
     return events

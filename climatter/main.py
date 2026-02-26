@@ -1,9 +1,8 @@
 import argparse
 
-from .config import Config, read_config
+from .config import read_config
 from .display_events import filter_events, list_events, notify_events
-from .event import Event
-from .get_events import read_events_from_file
+from .get_events import load_events
 
 
 def handle_args() -> argparse.Namespace:
@@ -30,27 +29,15 @@ def handle_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_events(config: Config) -> list[Event]:
-    events: list[Event] = []
-    for event_list in config.event_lists.values():
-        e = read_events_from_file(event_list)
-        if e:
-            events.extend(e)
-    if config.dev_today:
-        for event in events:
-            event.checkin(today=config.dev_today)
-    return events
-
-
 def main():
     args = handle_args()
-    config = read_config(args=args)
+    config = read_config(args)
 
     events = load_events(config)
-    shortlisted_events = filter_events(events, config.option)
     if config.notify:
-        notify_events(shortlisted_events)
+        notify_events(events)
     else:
+        shortlisted_events = filter_events(events, config.option)
         list_events(shortlisted_events)
 
 
