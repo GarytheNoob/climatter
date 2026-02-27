@@ -10,7 +10,7 @@ that helps you remember important dates and events.
 - [x] List all your important dates and events, with the number of days until or
       since each event.
 
-- [x] Notify if today is an important day (event, annivarsary of past event,
+- [x] Notify if today is an important day (event, anniversary of past event,
       hundred-day since past event, etc).
 
 - [x] Configure
