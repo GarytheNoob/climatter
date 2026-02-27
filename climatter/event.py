@@ -13,6 +13,7 @@ class Event:
     def checkin(self, today: date | None = None) -> None:
         if today is None:
             today = date.today()
+
         if self.yearly:
             self.the_date = self.the_date.replace(year=today.year)
             if self.the_date < today:
