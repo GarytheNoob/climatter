@@ -50,7 +50,7 @@ def _read_yaml_config(config_file: Path) -> dict[str, Any]:
 
 def _get_default_config() -> dict[str, Any]:
     return {
-        "option": {
+        "options": {
             "list_mode": "nearest",
             "list_future_events_count": 5,
             "list_past_events_count": 5,
@@ -74,7 +74,7 @@ def _merge_configs(
     merged = default.copy()
     for key, value in user.items():
         if (
-            key == "option"
+            key == "options"
             and isinstance(value, dict)
             and key in merged
             and isinstance(merged[key], dict)
@@ -98,9 +98,9 @@ def load_config(args: argparse.Namespace) -> Config:
         merged_config = _merge_configs(merged_config, runtime_config)
 
     if args.mode:
-        merged_config["option"]["list_mode"] = args.mode
+        merged_config["options"]["list_mode"] = args.mode
 
-    option_data = merged_config.get("option", {})
+    option_data = merged_config.get("options", {})
     event_lists_data = merged_config.get("event_lists", {})
 
     option = Option(
